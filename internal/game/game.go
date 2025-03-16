@@ -21,8 +21,15 @@ func newSlot(generator Generator, calculator Calculator, roundCost uint64) *Slot
 }
 
 func (s *Slot) Spin(rng rng.RNG) (*result.Round, error) {
-	// todo: implement me
-	return nil, nil
+	reels, err := s.generator.Generate(rng)
+	if err != nil {
+		return nil, err
+	}
+	wins, err := s.calculator.Calculate(reels)
+	if err != nil {
+		return nil, err
+	}
+	return result.NewRound(reels, wins, s.roundCost), nil
 }
 
 func (s *Slot) RoundCost() uint64 {

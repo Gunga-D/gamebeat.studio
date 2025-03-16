@@ -1,12 +1,13 @@
 package calculator
 
 import (
+	"testing"
+
 	"github.com/releaseband/golang-developer-test/internal/configs/lines"
 	"github.com/releaseband/golang-developer-test/internal/configs/paytable"
 	"github.com/releaseband/golang-developer-test/internal/configs/symbols"
 	"github.com/releaseband/golang-developer-test/internal/game/win"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestCalculator_Calculate(t *testing.T) {
@@ -30,23 +31,34 @@ func TestCalculator_Calculate(t *testing.T) {
 		spinSymbols symbols.Reels
 	}{
 		{
-			name: "without win",
+			name: "without_win",
+			exp:  nil,
+			spinSymbols: []symbols.Symbols{
+				{1, 2, 1}, // 1 reel
+				{3, 2, 1}, // 2 reel
+				{1, 3, 3}, // 3 reel
+				{4, 1, 3}, // 4 reel
+				{1, 4, 4}, // 5 reel
+			},
+		},
+		{
+			name: "shuffle_without_win",
 			exp:  nil,
 			spinSymbols: []symbols.Symbols{
 				{3, 2, 1}, // 1 reel
 				{3, 2, 1}, // 2 reel
 				{3, 3, 3}, // 3 reel
-				{4, 4, 4}, // 4 reel
+				{1, 3, 3}, // 4 reel
 				{4, 4, 4}, // 5 reel
 			},
 		},
 		{
-			name: "win by 3",
+			name: "win_by_3",
 			spinSymbols: []symbols.Symbols{
 				{2, 3, 1}, // 1 reel
 				{2, 3, 1}, // 2 reel
 				{3, 3, 3}, // 3 reel
-				{4, 3, 4}, // 4 reel
+				{1, 3, 1}, // 4 reel
 				{4, 3, 4}, // 5 reel
 			},
 			exp: []win.Win{
@@ -54,12 +66,12 @@ func TestCalculator_Calculate(t *testing.T) {
 			},
 		},
 		{
-			name: "win by 2",
+			name: "win_by_2",
 			spinSymbols: []symbols.Symbols{
 				{2, 3, 1}, // 1 reel
 				{2, 3, 1}, // 2 reel
 				{2, 3, 3}, // 3 reel
-				{2, 6, 4}, // 4 reel
+				{2, 6, 1}, // 4 reel
 				{4, 5, 4}, // 5 reel
 			},
 			exp: []win.Win{
@@ -67,7 +79,7 @@ func TestCalculator_Calculate(t *testing.T) {
 			},
 		},
 		{
-			name: "win by 1 and 2",
+			name: "win_by_1_and_2",
 			spinSymbols: []symbols.Symbols{
 				{2, 3, 1}, // 1 reel
 				{2, 3, 1}, // 2 reel
@@ -81,7 +93,7 @@ func TestCalculator_Calculate(t *testing.T) {
 			},
 		},
 		{
-			name: "win by 1,2,3",
+			name: "win_by_1,2,3",
 			spinSymbols: []symbols.Symbols{
 				{2, 3, 1}, // 1 reel
 				{2, 3, 1}, // 2 reel
@@ -93,6 +105,45 @@ func TestCalculator_Calculate(t *testing.T) {
 				win.NewWin(7, symbols.Symbols{2, 2, 2, 2, 2}, 2),
 				win.NewWin(8, symbols.Symbols{3, 3, 3, 3, 3}, 3),
 				win.NewWin(5, symbols.Symbols{1, 1, 1, 1, 1}, 1),
+			},
+		},
+		{
+			name: "win_with_wildcard",
+			spinSymbols: []symbols.Symbols{
+				{2, 1, 1}, // 1 reel
+				{2, 2, 2}, // 2 reel
+				{0, 3, 3}, // 3 reel
+				{2, 1, 1}, // 4 reel
+				{2, 2, 2}, // 5 reel
+			},
+			exp: []win.Win{
+				win.NewWin(7, symbols.Symbols{2, 2, 0, 2, 2}, 2),
+			},
+		},
+		{
+			name: "start_win_by_wildcard",
+			spinSymbols: []symbols.Symbols{
+				{0, 1, 1}, // 1 reel
+				{2, 2, 2}, // 2 reel
+				{2, 3, 3}, // 3 reel
+				{2, 1, 1}, // 4 reel
+				{2, 2, 2}, // 5 reel
+			},
+			exp: []win.Win{
+				win.NewWin(7, symbols.Symbols{0, 2, 2, 2, 2}, 2),
+			},
+		},
+		{
+			name: "wildcard_to_first_win",
+			spinSymbols: []symbols.Symbols{
+				{1, 1, 1}, // 1 reel
+				{1, 2, 2}, // 2 reel
+				{0, 3, 3}, // 3 reel
+				{2, 1, 1}, // 4 reel
+				{2, 2, 2}, // 5 reel
+			},
+			exp: []win.Win{
+				win.NewWin(3, symbols.Symbols{1, 1, 0}, 1),
 			},
 		},
 	}

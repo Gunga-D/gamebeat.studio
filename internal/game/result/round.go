@@ -21,3 +21,11 @@ func NewRound(symbols []symbols.Symbols, wins []win.Win, cost uint64) *Round {
 func (r *Round) Wins() []win.Win {
 	return r.wins
 }
+
+func (r *Round) Slots() []symbols.Symbols {
+	return r.symbols
+}
+
+func (r *Round) Cost() uint64 {
+	return r.cost
+}

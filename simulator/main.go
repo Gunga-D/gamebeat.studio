@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/releaseband/golang-developer-test/internal/game"
 	"github.com/releaseband/golang-developer-test/internal/rng"
 )
@@ -28,6 +29,7 @@ func run() error {
 		if err != nil {
 			return fmt.Errorf("spin: %w", err)
 		}
+		fmt.Printf("round info of spin %d:\nspins: %v\nwins: %v\ncost: %d\n\n", i, res.Slots(), res.Wins(), res.Cost())
 
 		for _, w := range res.Wins() {
 			totalWin += w.Amount()
