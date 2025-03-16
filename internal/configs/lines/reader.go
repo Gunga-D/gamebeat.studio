@@ -2,7 +2,10 @@ package lines
 
 import (
 	"embed"
+	"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/releaseband/golang-developer-test/internal/configs/reader"
 )
 
@@ -10,8 +13,18 @@ import (
 var lines embed.FS
 
 func parseLine(data []string) (*Line, error) {
-	// todo: implement me
-	return nil, nil
+	if len(data) == 0 {
+		return nil, errors.New("no input")
+	}
+	indices := make([]int, 0, len(data))
+	for _, v := range data {
+		pv, err := strconv.Atoi(v)
+		if err != nil {
+			return nil, err
+		}
+		indices = append(indices, pv)
+	}
+	return NewLine(indices), nil
 }
 
 func ReadLines() (Lines, error) {

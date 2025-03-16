@@ -2,7 +2,10 @@ package symbols
 
 import (
 	"embed"
+	"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/releaseband/golang-developer-test/internal/configs/reader"
 )
 
@@ -12,8 +15,24 @@ var symbols embed.FS
 const skipSymbol = -1
 
 func parseReels(data [][]string) ([]Symbols, error) {
-	// todo: implement me
-	return nil, nil
+	if len(data) == 0 {
+		return nil, errors.New("no data")
+	}
+
+	res := make([]Symbols, len(data[0]))
+	for _, line := range data {
+		for idx, symb := range line {
+			pSymb, err := strconv.Atoi(symb)
+			if err != nil {
+				return nil, err
+			}
+			if pSymb == skipSymbol {
+				continue
+			}
+			res[idx] = append(res[idx], Symbol(pSymb))
+		}
+	}
+	return res, nil
 }
 
 // ReadReels - read symbols from file

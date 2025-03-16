@@ -2,7 +2,10 @@ package paytable
 
 import (
 	"embed"
+	"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/releaseband/golang-developer-test/internal/configs/reader"
 	"github.com/releaseband/golang-developer-test/internal/configs/symbols"
 )
@@ -11,8 +14,23 @@ import (
 var payTable embed.FS
 
 func parsePayouts(data [][]string) (map[symbols.Symbol]Payout, error) {
-	// todo: implement me
-	return nil, nil
+	if len(data) == 0 {
+		return nil, errors.New("no data")
+	}
+
+	res := make(map[symbols.Symbol]Payout)
+	for idx, p := range data {
+		ps := make([]uint64, 0, len(p))
+		for _, v := range p {
+			pv, err := strconv.ParseUint(v, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			ps = append(ps, pv)
+		}
+		res[symbols.Symbol(idx)] = Payout(ps)
+	}
+	return res, nil
 }
 
 func ReadPayTable() (*PayTable, error) {

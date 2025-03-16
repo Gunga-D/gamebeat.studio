@@ -1,6 +1,8 @@
 package paytable
 
 import (
+	"errors"
+
 	"github.com/releaseband/golang-developer-test/internal/configs/symbols"
 )
 
@@ -17,6 +19,9 @@ func NewPayTable(symbolPayouts map[symbols.Symbol]Payout) *PayTable {
 }
 
 func (p *PayTable) Get(s symbols.Symbol, index int) (uint64, error) {
-	// todo: implement me
-	return 0, nil
+	payList, ok := p.symbolPayouts[s]
+	if !ok {
+		return 0, errors.New("no paylist for symbol")
+	}
+	return payList[index], nil
 }
